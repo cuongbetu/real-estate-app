@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id          String   @id @default(cuid())
+
+  title       String
+  slug        String   @unique
+  description String
+
+  price           String
+  pricePerM2      Float?
+  currency        Currency  @default(VND)
+  priceNegotiable Boolean   @default(false)
+
+  address     String
+  ward        String?
+  district    String
+  city        String
+  mapLat      Float?
+  mapLng      Float?
+  mapsUrl     String?
+
+  area        Float
+  areaUsable  Float?
+  areaLand    Float?
+  width       Float?
+  length      Float?
+  floors      Int?
+  bedrooms    Int?
+  bathrooms   Int?
+  direction   Direction?
+
+  type        PropertyType
+  category    PropertyCategory
+  status      ListingStatus  @default(ACTIVE)
+
+  legalStatus LegalStatus?
+  furniture   FurnitureStatus?
+  minLotSize  Float?
+
+  images      String[]
+  videoUrl    String?
+
+  contactName   String
+  contactPhone  String
+  contactPhone2 String?
+
+  featured  Boolean  @default(false)
+  verified  Boolean  @default(false)
+
+  views     Int      @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime?
+
+  @@index([category, type, status])
+  @@index([city, district])
+  @@index([featured])
+  @@index([createdAt])
+}
+
+enum Currency {
+  VND
+  USD
+}
+
+enum PropertyType {
+  NHA_PHO
+  CAN_HO
+  BIET_THU
+  DAT_NEN
+  MAT_BANG
+  KHO_XUONG
+  VAN_PHONG
+  DAT_CONG_NGHIEP
+  SHOPHOUSE
+  OTHER
+}
+
+enum PropertyCategory {
+  MUA_BAN
+  CHO_THUE
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  HIDDEN
+  EXPIRED
+}
+
+enum Direction {
+  DONG
+  TAY
+  NAM
+  BAC
+  DONG_NAM
+  DONG_BAC
+  TAY_NAM
+  TAY_BAC
+}
+
+enum LegalStatus {
+  SO_DO
+  SO_HONG
+  HOP_DONG
+  DANG_CHO_SO
+}
+
+enum FurnitureStatus {
+  FULL_FURNITURE
+  BASIC_FURNITURE
+  NO_FURNITURE
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  name         String
+  avatarUrl    String?
+  rating       Int      @default(5)
+  comment      String
+  displayOrder Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([published, displayOrder])
+}
+
+model SiteStat {
+  key       String   @id
+  value     Int      @default(0)
+  override  Int?
+  label     String?
+  updatedAt DateTime @updatedAt
+}
+
+model PriceOption {
+  id           String   @id @default(cuid())
+  label        String   // "500 triệu", "1 tỉ", "2 tỉ" …
+  value        Float    // raw VND value e.g. 1000000000
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([active, displayOrder])
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#e4e4e7"/>
+  <g fill="#a1a1aa" font-family="system-ui,sans-serif" text-anchor="middle">
+    <text x="400" y="290" font-size="80">🏠</text>
+    <text x="400" y="350" font-size="22">Chưa có hình ảnh</text>
+  </g>
+</svg>
