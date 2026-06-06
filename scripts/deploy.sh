@@ -50,7 +50,7 @@ done
 
 # ── 3. Install / update npm dependencies ─────────────────────────────────────
 step "3. Installing dependencies"
-npm ci --omit=dev
+npm ci
 ok "Dependencies installed"
 
 # ── 4. Prisma: generate client + push schema ─────────────────────────────────
