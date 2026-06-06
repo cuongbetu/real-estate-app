@@ -33,11 +33,11 @@ ok "Code up to date"
 
 # ── 2. Start / ensure PostgreSQL container is running ────────────────────────
 step "2. Starting PostgreSQL (Docker)"
-docker-compose up -d
+docker compose up -d
 # Wait until Postgres is ready
 echo "Waiting for PostgreSQL to be ready..."
 for i in {1..20}; do
-  if docker-compose exec -T postgres pg_isready -U realestate -d realestate > /dev/null 2>&1; then
+  if docker compose exec -T postgres pg_isready -U realestate -d realestate > /dev/null 2>&1; then
     ok "PostgreSQL is ready"
     break
   fi
