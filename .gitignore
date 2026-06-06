@@ -20,6 +20,13 @@
 # production
 /build
 
+# uploaded files (stored locally — use S3/CDN for production persistence)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# PM2 logs
+/logs
+
 # misc
 .DS_Store
 *.pem
