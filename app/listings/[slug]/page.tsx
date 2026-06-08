@@ -92,22 +92,40 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   ].filter(Boolean) as [string, string][];
 
   // Build the Google Maps embed URL.
+
   // Priority: mapsUrl field → lat/lng → full address fallback.
+  // Short URLs (maps.app.goo.gl, goo.gl/maps) are resolved server-side
+  // because appending ?output=embed to a redirect URL doesn't work.
+  let resolvedMapsUrl = listing.mapsUrl ?? null;
+  if (resolvedMapsUrl && /maps\.app\.goo\.gl|goo\.gl\/maps/.test(resolvedMapsUrl)) {
+    try {
+      const res = await fetch(resolvedMapsUrl, {
+        redirect: "follow",
+        next: { revalidate: 3600 },
+      });
+      resolvedMapsUrl = res.url || resolvedMapsUrl;
+    } catch {
+      // keep original; will fall through to address-based embed
+    }
+  }
+
   const mapEmbed = (() => {
-    if (listing.mapsUrl) {
-      const url = listing.mapsUrl.trim();
+    if (resolvedMapsUrl) {
+      const url = resolvedMapsUrl.trim();
       // Already an embed URL — use as-is
       if (url.includes("/maps/embed")) return url;
-      // URL with @lat,lng coordinates (standard share link)
+      // URL with @lat,lng coordinates (standard desktop/mobile share link)
       const coords = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
       if (coords) {
         return `https://www.google.com/maps?q=${coords[1]},${coords[2]}&z=15&output=embed`;
       }
-      // Generic Google Maps URL — append output=embed
+      // Full Google Maps URL — append output=embed
       try {
         const u = new URL(url);
-        u.searchParams.set("output", "embed");
-        return u.toString();
+        if (u.hostname.includes("google.com")) {
+          u.searchParams.set("output", "embed");
+          return u.toString();
+        }
       } catch { /* fall through */ }
     }
     if (listing.mapLat && listing.mapLng) {
@@ -233,6 +251,29 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
             </div>
           </section>
 
+          {listing.videoUrl && (
+            <section className="mt-6">
+              <h2 className="font-bold text-lg mb-2">Video</h2>
+              <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden aspect-video">
+                {isYouTubeUrl(listing.videoUrl) ? (
+                  <iframe
+                    src={toYouTubeEmbed(listing.videoUrl)}
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={listing.videoUrl}
+                    controls
+                    className="w-full h-full"
+                  />
+                )}
+              </div>
+            </section>
+          )}
+
           <section className="mt-6">
             <h2 className="font-bold text-lg mb-2">Bản đồ</h2>
             <div className="bg-white border border-zinc-200 rounded-lg overflow-hidden">
@@ -272,4 +313,28 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
       </div>
     </div>
   );
+}
+
+function isYouTubeUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return hostname === "youtu.be" || hostname.includes("youtube.com");
+  } catch {
+    return false;
+  }
+}
+
+function toYouTubeEmbed(url: string): string {
+  try {
+    const u = new URL(url);
+    let id: string | null = null;
+    if (u.hostname === "youtu.be") {
+      id = u.pathname.slice(1);
+    } else if (u.hostname.includes("youtube.com")) {
+      if (u.pathname.startsWith("/embed/")) return url;
+      id = u.searchParams.get("v");
+    }
+    if (id) return `https://www.youtube.com/embed/${id}`;
+  } catch { /* fall through */ }
+  return url;
 }

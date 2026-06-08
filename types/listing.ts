@@ -9,9 +9,11 @@ export type ListingSummary = Pick<
   | "slug"
   | "price"
   | "pricePerM2"
+  | "priceNegotiable"
   | "currency"
   | "area"
   | "bedrooms"
+  | "address"
   | "city"
   | "district"
   | "ward"
@@ -22,5 +24,5 @@ export type ListingSummary = Pick<
   | "featured"
   | "images"
   | "views"
-  | "createdAt"
+  | "createdAt" 
 >;

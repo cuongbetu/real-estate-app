@@ -30,6 +30,15 @@ export default function ListingForm({ initial, mode }: Props) {
   const [imagesText, setImagesText] = useState((initial?.images ?? []).join("\n"));
   const [uploading, setUploading] = useState(false);
 
+  const initVideoUrl = initial?.videoUrl ?? "";
+  const initVideoTab =
+    initVideoUrl && !initVideoUrl.includes("youtube") && !initVideoUrl.includes("youtu.be")
+      ? "device"
+      : "youtube";
+  const [videoTab, setVideoTab] = useState<"device" | "youtube">(initVideoTab);
+  const [videoUrl, setVideoUrl] = useState(initVideoUrl);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+
   async function uploadFiles(files: FileList) {
     setUploading(true);
     setError(null);
@@ -50,6 +59,23 @@ export default function ListingForm({ initial, mode }: Props) {
       setError(e instanceof Error ? e.message : "Lỗi tải ảnh");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function uploadVideo(file: File) {
+    setUploadingVideo(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload/video", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
+      setVideoUrl(data.url ?? "");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Lỗi tải video");
+    } finally {
+      setUploadingVideo(false);
     }
   }
 
@@ -111,7 +137,7 @@ export default function ListingForm({ initial, mode }: Props) {
       furniture: optStr("furniture"),
       minLotSize: num("minLotSize"),
       images,
-      videoUrl: optStr("videoUrl"),
+      videoUrl: videoUrl || null,
       contactName: str("contactName"),
       contactPhone: str("contactPhone"),
       contactPhone2: optStr("contactPhone2"),
@@ -180,11 +206,10 @@ export default function ListingForm({ initial, mode }: Props) {
             </select>
           </Field>
         </div>
-        <Field label="Mô tả" required>
+        <Field label="Mô tả" >
           <textarea
             name="description"
             defaultValue={v.description ?? ""}
-            required
             rows={6}
             className={inputCls}
           />
@@ -206,14 +231,6 @@ export default function ListingForm({ initial, mode }: Props) {
             <input name="city" defaultValue={v.city ?? ""} required className={inputCls} />
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Vĩ độ (lat)">
-            <input name="mapLat" defaultValue={v.mapLat ?? ""} type="number" step="any" className={inputCls} />
-          </Field>
-          <Field label="Kinh độ (lng)">
-            <input name="mapLng" defaultValue={v.mapLng ?? ""} type="number" step="any" className={inputCls} />
-          </Field>
-        </div>
         <Field label="Link Google Maps (tuỳ chọn)">
           <input
             name="mapsUrl"
@@ -231,7 +248,7 @@ export default function ListingForm({ initial, mode }: Props) {
       <Section title="3. Thông tin BĐS">
         <div className="grid grid-cols-3 gap-3">
           <Field label="Diện tích (m²)" required>
-            <input name="area" type="number" step="any" defaultValue={v.area ?? ""} required className={inputCls} />
+            <input name="area" type="number" step="any" defaultValue={v.area ?? ""} className={inputCls} />
           </Field>
           <Field label="DT sử dụng">
             <input name="areaUsable" type="number" step="any" defaultValue={v.areaUsable ?? ""} className={inputCls} />
@@ -323,7 +340,7 @@ export default function ListingForm({ initial, mode }: Props) {
         </div>
       </Section>
 
-      <Section title="6. Hình ảnh & video">
+      <Section title="6. Hình ảnh">
         <Field label="Tải ảnh từ máy">
           <div className="flex items-center gap-3">
             <label className="px-3 py-2 border border-zinc-300 rounded text-sm cursor-pointer hover:bg-zinc-100 inline-block">
@@ -356,12 +373,75 @@ export default function ListingForm({ initial, mode }: Props) {
             Có thể trộn URL bên ngoài và ảnh đã tải lên. Ảnh tải lên sẽ tự thêm vào đây.
           </p>
         </Field>
-        <Field label="URL video (YouTube)">
-          <input name="videoUrl" defaultValue={v.videoUrl ?? ""} className={inputCls} />
-        </Field>
       </Section>
 
-      <Section title="7. Liên hệ">
+      <Section title="7. Video">
+        {/* Tab bar */}
+        <div className="flex border-b border-zinc-200 mb-3">
+          <button
+            type="button"
+            onClick={() => { setVideoTab("youtube"); setVideoUrl(""); }}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              videoTab === "youtube"
+                ? "border-[var(--color-brand)] text-[var(--color-brand)]"
+                : "border-transparent text-zinc-500 hover:text-zinc-700"
+            }`}
+          >
+            Link YouTube
+          </button>
+          <button
+            type="button"
+            onClick={() => { setVideoTab("device"); setVideoUrl(""); }}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              videoTab === "device"
+                ? "border-[var(--color-brand)] text-[var(--color-brand)]"
+                : "border-transparent text-zinc-500 hover:text-zinc-700"
+            }`}
+          >
+            Tải từ máy
+          </button>
+        </div>
+
+        {videoTab === "youtube" && (
+          <Field label="URL YouTube">
+            <input
+              type="url"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="https://www.youtube.com/watch?v=... hoặc https://youtu.be/..."
+              className={inputCls}
+            />
+          </Field>
+        )}
+
+        {videoTab === "device" && (
+          <Field label="Chọn video">
+            <div className="flex items-center gap-3">
+              <label className="px-3 py-2 border border-zinc-300 rounded text-sm cursor-pointer hover:bg-zinc-100 inline-block">
+                {uploadingVideo ? "Đang tải…" : "📁 Chọn video"}
+                <input
+                  type="file"
+                  accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) uploadVideo(file);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              <span className="text-xs text-zinc-500">MP4 / WebM / OGG / MOV, tối đa 20MB.</span>
+            </div>
+            {videoUrl && (
+              <p className="text-xs text-zinc-500 mt-1 truncate">
+                Đã tải: <span className="text-zinc-700">{videoUrl}</span>
+              </p>
+            )}
+          </Field>
+        )}
+      </Section>
+
+      <Section title="8. Liên hệ">
         <div className="grid grid-cols-3 gap-3">
           <Field label="Tên người liên hệ" required>
             <input name="contactName" defaultValue={v.contactName ?? ""} required className={inputCls} />
@@ -375,7 +455,7 @@ export default function ListingForm({ initial, mode }: Props) {
         </div>
       </Section>
 
-      <Section title="8. Cài đặt">
+      <Section title="9. Cài đặt">
         <div className="grid grid-cols-3 gap-3">
           <Field label="Trạng thái">
             <select name="status" defaultValue={v.status ?? "ACTIVE"} className={inputCls}>

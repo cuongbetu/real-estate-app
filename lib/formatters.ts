@@ -58,7 +58,7 @@ export function formatRelativeTime(date: Date | string): string {
 }
 
 export const PROPERTY_TYPE_LABEL: Record<PropertyType, string> = {
-  NHA_PHO: "Nhà phố",
+  NHA_PHO: "Nhà đất",
   CAN_HO: "Căn hộ",
   BIET_THU: "Biệt thự",
   DAT_NEN: "Đất nền",

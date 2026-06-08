@@ -86,7 +86,7 @@ export const listingCreateSchema = z.object({
   minLotSize: nullableNumber,
 
   images: z.array(z.string().url().or(z.string().startsWith("/"))).default([]),
-  videoUrl: z.string().url().nullish().transform((v) => v || null),
+  videoUrl: z.union([z.string().url(), z.string().startsWith("/")]).nullish().transform((v) => v || null),
 
   contactName: z.string().min(2, "Tên người liên hệ bắt buộc"),
   contactPhone: z.string().min(8, "Số điện thoại không hợp lệ"),
