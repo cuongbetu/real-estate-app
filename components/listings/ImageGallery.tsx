@@ -28,6 +28,7 @@ export default function ImageGallery({
           className="object-cover"
           sizes="(min-width: 1024px) 60vw, 100vw"
           priority
+          unoptimized={safe[active].startsWith("/uploads/")}
         />
       </button>
       {safe.length > 1 && (
@@ -41,7 +42,7 @@ export default function ImageGallery({
                 active === i ? "border-[var(--color-brand)]" : "border-transparent"
               }`}
             >
-              <Image src={src} alt="" fill className="object-cover" sizes="100px" />
+              <Image src={src} alt="" fill className="object-cover" sizes="100px" unoptimized={src.startsWith("/uploads/")} />
               {i === 5 && safe.length > 6 && (
                 <span className="absolute inset-0 bg-black/60 text-white grid place-items-center text-sm font-semibold">
                   +{safe.length - 6}
@@ -64,6 +65,7 @@ export default function ImageGallery({
               fill
               className="object-contain"
               sizes="100vw"
+              unoptimized={safe[active].startsWith("/uploads/")}
             />
           </div>
           <button

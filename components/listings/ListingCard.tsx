@@ -28,11 +28,7 @@ export default function ListingCard({ listing, variant = "row" }: Props) {
         className="bg-white rounded-lg border border-zinc-200 overflow-hidden hover:shadow-md transition"
       >
         <div className="relative aspect-[4/3] bg-zinc-100">
-          {isExternal ? (
-            <Image src={cover} alt={listing.title} fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" />
-          ) : (
-            <Image src={cover} alt={listing.title} fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" />
-          )}
+          <Image src={cover} alt={listing.title} fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" unoptimized={!isExternal} />
           {listing.featured && (
             <span className="absolute top-2 left-2 bg-[var(--color-brand)] text-white text-xs font-semibold px-2 py-0.5 rounded">
               Nổi bật
@@ -72,7 +68,7 @@ export default function ListingCard({ listing, variant = "row" }: Props) {
       className="flex gap-4 bg-white rounded-lg border border-zinc-200 p-3 hover:shadow-md transition"
     >
       <div className="relative w-40 h-32 shrink-0 bg-zinc-100 rounded overflow-hidden">
-        <Image src={cover} alt={listing.title} fill className="object-cover" sizes="160px" />
+        <Image src={cover} alt={listing.title} fill className="object-cover" sizes="160px" unoptimized={!isExternal} />
         {listing.featured && (
           <span className="absolute top-1 left-1 bg-[var(--color-brand)] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
             Nổi bật
