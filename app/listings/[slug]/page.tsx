@@ -29,8 +29,8 @@ export async function generateMetadata({
   const listing = await getListing(slug);
   if (!listing) return { title: "Không tìm thấy tin đăng" };
   return {
-    title: `${listing.title} | Giá ${formatPrice(listing.price, listing.currency)}`,
-    description: `${PROPERTY_TYPE_LABEL[listing.type]} tại ${listing.district}, ${listing.city}. Diện tích ${formatArea(listing.area)}. ${listing.description.slice(0, 120)}`,
+    title: `${listing.title} — ${listing.district}, ${listing.city}`,
+    description: `${PROPERTY_TYPE_LABEL[listing.type]} tại ${listing.address}, ${listing.district}, ${listing.city}. Diện tích ${formatArea(listing.area)}, giá ${formatPrice(listing.price, listing.currency)}. ${listing.description.slice(0, 100)}`,
     alternates: {
       canonical: `/listings/${listing.slug}`,
     },

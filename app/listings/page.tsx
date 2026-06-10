@@ -4,12 +4,37 @@ import SearchFilter from "@/components/listings/SearchFilter";
 import MobileFilter from "@/components/listings/MobileFilter";
 import SortSelect from "@/components/listings/SortSelect";
 import PerPageSelect from "@/components/listings/PerPageSelect";
+import type { Metadata } from "next";
 
 const PER_PAGE_OPTIONS = [10, 20, 50];
 const DEFAULT_PER_PAGE = 20;
 import Link from "next/link";
 import type { Prisma } from "@prisma/client";
 import { getPriceOptions } from "@/lib/priceOptions";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const parts: string[] = [];
+  if (sp.category === "MUA_BAN") parts.push("Mua bán");
+  else if (sp.category === "CHO_THUE") parts.push("Cho thuê");
+  else parts.push("Mua bán & cho thuê");
+  if (sp.type) parts.push(String(sp.type).toLowerCase().replace(/_/g, " "));
+  if (sp.district) parts.push(String(sp.district));
+  if (sp.city) parts.push(String(sp.city));
+
+  const title = parts.join(" ") + " — Nhà đất giá tốt 24h";
+  const description = `Danh sách bất động sản ${parts.slice(1).join(", ")} cập nhật mới nhất. Tìm nhà phố, căn hộ, đất nền giá tốt tại nhadatgiatot24h.com`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: "/listings" },
+  };
+}
 
 type SearchParams = Promise<{ [k: string]: string | string[] | undefined }>;
 
