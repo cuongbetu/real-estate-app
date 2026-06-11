@@ -167,7 +167,7 @@ export default function StatsPanel({ initialStats }: Props) {
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="VD: contact@nhadatgiatot24h.com"
+              placeholder="VD: contact@nhadatgiatot247.com"
               className="w-full px-3 py-2 border border-zinc-300 rounded text-sm"
             />
           </div>

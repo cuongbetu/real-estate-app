@@ -16,7 +16,7 @@ warn() { echo -e "${YELLOW}⚠  $1${NC}"; }
 err()  { echo -e "${RED}✘ $1${NC}"; exit 1; }
 
 APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-APP_NAME="nhadatgiatot24h"
+APP_NAME="nhadatgiatot247"
 
 cd "$APP_DIR"
 echo -e "${CYAN}Deploying from: $APP_DIR${NC}"

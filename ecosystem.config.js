@@ -3,12 +3,12 @@
 //
 // Usage:
 //   pm2 start ecosystem.config.js --env production
-//   pm2 reload nhadatgiatot24h --update-env
+//   pm2 reload nhadatgiatot247 --update-env
 
 module.exports = {
   apps: [
     {
-      name: "nhadatgiatot24h",
+      name: "nhadatgiatot247",
       script: "node_modules/.bin/next",
       args: "start",
 

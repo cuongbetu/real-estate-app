@@ -10,7 +10,7 @@ export default async function Footer() {
     "0900 000 000";
   const email =
     contactStats.find((s) => s.key === "footer_email")?.label ??
-    "contact@nhadatgiatot24h.com";
+    "contact@nhadatgiatot247.com";
 
   return (
     <footer className="bg-zinc-900 text-zinc-400 mt-12">
@@ -38,7 +38,7 @@ export default async function Footer() {
         </div>
       </div>
       <div className="border-t border-zinc-800 py-4 text-center text-xs">
-        © {new Date().getFullYear()} Nhà đất giá tốt 24h · nhadatgiatot24h.com
+        © {new Date().getFullYear()} Nhà đất giá tốt 24h · nhadatgiatot247.com
       </div>
     </footer>
   );
