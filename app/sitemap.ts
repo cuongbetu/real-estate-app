@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
-const BASE = "https://nhadatgiatot24h.com";
+const BASE = "https://nhadatgiatot247.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all active listings (only the fields we need)

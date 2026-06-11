@@ -27,7 +27,7 @@ export async function generateMetadata({
   if (sp.city) parts.push(String(sp.city));
 
   const title = parts.join(" ") + " — Nhà đất giá tốt 24h";
-  const description = `Danh sách bất động sản ${parts.slice(1).join(", ")} cập nhật mới nhất. Tìm nhà phố, căn hộ, đất nền giá tốt tại nhadatgiatot24h.com`;
+  const description = `Danh sách bất động sản ${parts.slice(1).join(", ")} cập nhật mới nhất. Tìm nhà phố, căn hộ, đất nền giá tốt tại nhadatgiatot247.com`;
 
   return {
     title,

@@ -5,13 +5,13 @@ import Footer from "@/components/layout/Footer";
 import VisitorPing from "@/components/layout/VisitorPing";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nhadatgiatot24h.com"),
+  metadataBase: new URL("https://nhadatgiatot247.com"),
   title: {
     default: "Nhà đất giá tốt 24h — Mua bán & cho thuê bất động sản",
     template: "%s | Nhà đất giá tốt 24h",
   },
   description:
-    "Mua bán & cho thuê nhà phố, căn hộ, đất nền, mặt bằng kinh doanh trên toàn quốc. Giá tốt nhất 24h — nhadatgiatot24h.com",
+    "Mua bán & cho thuê nhà phố, căn hộ, đất nền, mặt bằng kinh doanh trên toàn quốc. Giá tốt nhất 24h — nhadatgiatot247.com",
   alternates: {
     canonical: "/",
   },
